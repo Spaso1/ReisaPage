@@ -36,7 +36,7 @@ export const footerConfig: FooterConfig = {
   provider: {
     name: "Aliyun",
     link: "https://www.aliyun.com/",
-    logo: "https://app.rainyun.com/img/icons/apple-touch-icon-152x152.png",
+    logo: "https://avatars.githubusercontent.com/u/172407636?v=4",
     text: "提供 CDN 加速 / 云存储服务",
   },
 };

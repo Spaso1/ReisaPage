@@ -9,7 +9,7 @@ import Toast from "./components/ui/Toast.vue";
 import Modal from "./components/ui/Modal.vue";
 import { noticeConfig } from "./config/notice";
 import type { NoticeButton } from "./types/notice";
-import { siteConfig } from "./config/site";
+import { siteConfig } from "@/config";
 import { siteInfo } from "./config/site-info";
 import { printConsoleInfo } from "@/utils/console";
 
@@ -18,6 +18,8 @@ const router = useRouter();
 
 // 是否为开发环境
 const isDev = import.meta.env.DEV;
+
+document.documentElement.classList.add("dark-mode");
 
 // 监听路由变化更新页面标题和描述
 watch(
@@ -183,4 +185,30 @@ onMounted(() => {
       </template>
     </Modal>
   </div>
+
 </template>
+
+<style scoped>
+.min-h-screen {
+  position: relative; /* 添加相对定位 */
+  background-image: url('https://cdn.godserver.cn/resource/static/1C6F3506CAFAE1443024752BFC4B5302.jpg');
+  background-size: cover; /* 背景图片覆盖整个元素 */
+  background-position: center; /* 背景图片居中 */
+  background-repeat: no-repeat; /* 防止背景图片重复 */
+}
+
+.min-h-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: inherit; /* 继承背景图片 */
+  background-size: cover; /* 背景图片覆盖整个元素 */
+  background-position: center; /* 背景图片居中 */
+  background-repeat: no-repeat; /* 防止背景图片重复 */
+  opacity: 0.3; /* 调整透明度 */
+  z-index: -1; /* 确保伪元素在内容下方 */
+}
+</style>

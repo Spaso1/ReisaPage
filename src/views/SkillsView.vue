@@ -20,7 +20,7 @@ const skills = ref<Skill[]>([
       { name: "Java", level: 90, description: "核心语言" },
       { name: "Spring Boot", level: 85, description: "Web应用开发" },
       { name: "MySQL", level: 80, description: "关系型数据库" },
-      { name: "Redis", level: 75, description: "缓存与数据存储" },
+      { name: "Redis", level: 60, description: "缓存与数据存储" },
     ],
   },
   {
@@ -31,6 +31,8 @@ const skills = ref<Skill[]>([
       { name: "TypeScript", level: 75, description: "类型系统" },
       { name: "Tailwind CSS", level: 85, description: "样式框架" },
       { name: "HTML/CSS", level: 80, description: "网页基础" },
+      { name: "Swift", level: 75, description: "iOS开发"},
+      { name: "Android", level: 75, description: "Android开发" },
     ],
   },
   {
@@ -41,6 +43,7 @@ const skills = ref<Skill[]>([
       { name: "Docker", level: 75, description: "容器化部署" },
       { name: "Linux", level: 80, description: "服务器运维" },
       { name: "IntelliJ IDEA", level: 85, description: "开发工具" },
+      { name: "WebStorm" ,level: 80, description: "VueJS开发"}
     ],
   },
 ]);

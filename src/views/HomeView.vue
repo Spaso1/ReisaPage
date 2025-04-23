@@ -4,7 +4,7 @@ import PageTransition from "@/components/PageTransition.vue";
 import { config } from "@/config";
 import { siteConfig } from "@/config/site";
 
-const titles = ref(["Java后端工程师", "热爱编程", "热爱生活"]);
+const titles = ref(["FindMaimaiDX", "Java", "Swift","Spring","Vue"]);
 const currentTitleIndex = ref(0);
 const isWaving = ref(false);
 const slogan = ref("");
@@ -72,7 +72,7 @@ const structuredData = {
         <div class="mb-6">
           <div class="relative inline-block avatar-container">
             <img
-              src="https://q.qlogo.cn/headimg_dl?dst_uin=30819792&spec=640&img_type=jpg"
+              src="http:///cdn.godserver.cn/resource/static/Image_1916058994254974.jpg"
               alt="头像"
               class="w-24 h-24 md:w-32 md:h-32 rounded-full shadow-xl border-4 border-white dark:border-gray-700 transition-all duration-300 avatar"
             />
@@ -93,7 +93,7 @@ const structuredData = {
               >
             </span>
             <span class="block opacity-0 animate-fade-in-delay-2">
-              我是 <span class="gradient-name">Handsome</span>
+              我是 <span class="gradient-name">Reisa</span>
             </span>
           </h1>
         </PageTransition>
@@ -123,23 +123,6 @@ const structuredData = {
               >|</span
             >
           </p>
-        </PageTransition>
-
-        <PageTransition name="slide-left">
-          <div class="flex flex-col sm:flex-row gap-5 justify-center">
-            <router-link
-              to="/projects"
-              class="btn-primary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-            >
-              查看作品
-            </router-link>
-            <router-link
-              to="/contact"
-              class="btn-secondary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-            >
-              联系我
-            </router-link>
-          </div>
         </PageTransition>
 
         <PageTransition name="scale">

@@ -38,7 +38,7 @@ export async function fetchBlogPosts(rssUrl: string): Promise<BlogPost[]> {
         title: getCleanContent(getElementText("title")),
         link: getElementText("link"),
         content: content,
-        creator: "Handsome",
+        creator: "Reisa",
         pubDate: getElementText("pubDate"),
         categories: [getElementText("category")].filter(Boolean),
         description: content,

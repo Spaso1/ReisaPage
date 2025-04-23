@@ -16,7 +16,7 @@
             target="_blank"
             class="font-medium hover:text-blue-500 transition-colors"
           >
-            Handsome
+            Reisa
           </a>
           <span>. All rights reserved.</span>
         </div>

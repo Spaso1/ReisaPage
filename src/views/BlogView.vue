@@ -87,7 +87,7 @@ function formatDate(date: Date): string {
             博客文章
           </h1>
           <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
-            分享技术见解和学习心得，记录编程之路的点点滴滴
+            随便写写
           </p>
         </div>
       </PageTransition>

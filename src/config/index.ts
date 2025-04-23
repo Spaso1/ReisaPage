@@ -6,7 +6,7 @@ export { siteConfig };
 // 合并基础配置
 export const config = {
   ...siteConfig,
-  siteUrl: "https://home.mmm.sd", // 默认值
+  siteUrl: "https://www.godserver.cn", // 默认值
 };
 
 // 生成 sitemap.xml 内容

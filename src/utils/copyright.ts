@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2024 Handsome
+ * Copyright (c) 2024 Reisa
  *
  * This file is part of the project and must retain the author's credit.
  * Modifications to this file must maintain original attribution.
@@ -9,7 +9,7 @@
 
 // 使用一个自执行函数来增加混淆难度
 export const createCopyrightGuard = (() => {
-  const key = btoa("Handsome" + new Date().getFullYear());
+  const key = btoa("Reisa" + new Date().getFullYear());
   const targetUrl = atob("aHR0cHM6Ly93d3cubW1tLnNkLw=="); // 加密的跳转URL
 
   return (element: HTMLElement | null) => {
@@ -18,7 +18,7 @@ export const createCopyrightGuard = (() => {
     // 随机检查函数
     const checks = [
       () => element.textContent?.includes("©"),
-      () => element.textContent?.includes("Handsome"),
+      () => element.textContent?.includes("Reisa"),
       () => element.textContent?.includes("All rights"),
       () => element.querySelector("a")?.href.includes("mmm.sd"),
       () => !element.textContent?.includes("Modified"),

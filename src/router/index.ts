@@ -84,6 +84,15 @@ const routes: RouteRecordRaw[] = [
       transition: "scale",
     },
   },
+  {
+    path: "/maimai",
+    name: "舞萌机器人相关",
+    component: () => import("@/views/MaimaiView.vue"),
+    meta: {
+      title: "舞萌机器人相关",
+      transition: "scale",
+    },
+  }
 ];
 
 const router = createRouter({
@@ -99,7 +108,7 @@ const router = createRouter({
 
 // 路由标题
 router.beforeEach((to, from, next) => {
-  document.title = `${to.meta.title || "首页"} | Handsome`;
+  document.title = `${to.meta.title || "首页"} | Reisa`;
   next();
 });
 

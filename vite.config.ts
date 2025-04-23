@@ -95,7 +95,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/rss.xml": {
-        target: "https://www.mmm.sd",
+        target: "https://www.godserver.cn",
         changeOrigin: true,
         rewrite: (path) => path + '?t=' + Date.now(),
         headers: {

@@ -49,6 +49,7 @@ const navItems = [
   { name: "技能", path: "/skills" },
   { name: "博客", path: "/blog" },
   { name: "联系", path: "/contact" },
+  { name: "舞萌机器人相关" , path: "/maimai"}
 ];
 
 const toggleMenu = () => {
@@ -66,7 +67,7 @@ const toggleMenu = () => {
           <span
             class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent bg-[length:200%_auto] hover:animate-gradient"
           >
-            Handsome
+            Reisa
           </span>
         </router-link>
 

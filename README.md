@@ -1,10 +1,7 @@
 # Home For Vue
 
 一个使用 Vue 3 + TypeScript + Vite 构建的现代化个人主页，具有博客文章展示、项目展示、联系表单等功能。
-
-# 💬交流
-![群.png](https://www.lik.cc/upload/iShot_2025-03-03_16.03.00.png)
-
+- Reisa 改编
 
 ## 特性
 
@@ -121,33 +118,3 @@ pnpm build
 ## 许可证
 
 [MIT](./LICENSE)
-
-## 版权声明
-
-- 代码版权归作者 [Handsome](https://www.mmm.sd/) 所有
-- 页脚版权信息不得移除或修改
-- 违反协议的使用行为将被追究法律责任
-
-### 补充条款
-
-在遵循 MIT 许可证的基础上，还需遵守以下条款：
-
-1. 必须保留页脚版权信息和作者署名
-2. 不得修改页脚中的作者信息
-3. 商业使用需获得作者明确授权
-
-## 作者
-
-[Handsome](https://www.mmm.sd/)
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 推荐服务商
-
-<a href="https://www.rainyun.com/handsome_" target="_blank">
-  <img src="https://app.rainyun.com/img/icons/apple-touch-icon-152x152.png" alt="Rainyun Logo" width="20" height="20" style="vertical-align: middle;" />
-  Rainyun
-</a>
-提供 CDN 加速 / 云存储服务

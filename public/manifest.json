@@ -1,6 +1,6 @@
 {
-  "name": "Handsome | Java后端开发工程师",
-  "short_name": "Handsome",
+  "name": "ReisaSpasol | MaimaiDX",
+  "short_name": "ReisaSpasol",
   "description": "专注于Java、Spring Boot、微服务等后端技术开发的个人作品集网站",
   "start_url": "/",
   "display": "standalone",
@@ -9,12 +9,12 @@
 
   "icons": [
     {
-      "src": "https://www.mmm.sd/upload/logo.png",
+      "src": "./assets/icon.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://www.mmm.sd/upload/logo.png",
+      "src": "./assets/icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
