@@ -24,18 +24,18 @@ export const footerConfig: FooterConfig = {
 
     {
       text: "博客",
-      href: "https://www.mmm.sd",
+      href: "https://www.godserver.cn",
       target: "_blank",
     },
     {
       text: "GitHub",
-      href: "https://github.com/acanyo",
+      href: "https://github.com/Spaso1",
       target: "_blank",
     },
   ],
   provider: {
-    name: "雨云",
-    link: "https://www.rainyun.com/handsome_",
+    name: "Aliyun",
+    link: "https://www.aliyun.com/",
     logo: "https://app.rainyun.com/img/icons/apple-touch-icon-152x152.png",
     text: "提供 CDN 加速 / 云存储服务",
   },
