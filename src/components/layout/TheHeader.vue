@@ -49,7 +49,7 @@ const navItems = [
   { name: "技能", path: "/skills" },
   { name: "博客", path: "/blog" },
   { name: "联系", path: "/contact" },
-  { name: "舞萌机器人相关" , path: "/maimai"}
+  { name: "FindMaimai" , path: "/maimai"}
 ];
 
 const toggleMenu = () => {

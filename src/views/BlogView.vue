@@ -1,15 +1,20 @@
+<!-- src/views/BlogView.vue -->
+
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import type { Ref } from "@vue/runtime-core";
-import { fetchBlogPosts } from "../utils/rss";
-import type { BlogPost } from "../types/blog";
+import { blogPosts } from "@/config/blog"; // 导入博客文章数组
+import type { BlogPost } from "@/types/blog";
 import PageTransition from "../components/PageTransition.vue";
+import MarkdownModal from "../components/MarkdownModal.vue";
 
 const posts: Ref<BlogPost[]> = ref([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
 const currentPage = ref(1);
 const postsPerPage = 6;
+const showModal = ref(false);
+const selectedMarkdown = ref('');
 
 // 计算总页数
 const totalPages = computed(() => Math.ceil(posts.value.length / postsPerPage));
@@ -58,7 +63,7 @@ function nextPage() {
 onMounted(async () => {
   try {
     loading.value = true;
-    posts.value = await fetchBlogPosts();
+    posts.value = blogPosts; // 使用导入的博客文章数组
   } catch (e) {
     error.value = e instanceof Error ? e.message : "获取博客文章失败";
   } finally {
@@ -73,6 +78,17 @@ function formatDate(date: Date): string {
     month: "long",
     day: "numeric",
   }).format(date);
+}
+
+// 显示 Markdown 内容
+function openMarkdown(post: BlogPost) {
+  selectedMarkdown.value = post.data; // 使用 data 字段
+  showModal.value = true;
+}
+
+// 关闭模态框
+function closeModal() {
+  showModal.value = false;
 }
 </script>
 
@@ -142,58 +158,51 @@ function formatDate(date: Date): string {
                   </time>
                 </div>
                 <h2
-                  class="text-xl font-bold mb-3 hover:text-primary transition-colors line-clamp-2"
+                  class="text-xl font-bold mb-3 hover:text-primary transition-colors line-clamp-2 cursor-pointer"
+                  @click="openMarkdown(post)"
                 >
-                  <a
-                    :href="post.link"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {{ post.title }}
-                  </a>
+                  {{ post.title }}
                 </h2>
-                <p
+                <div
                   class="text-secondary line-clamp-3 mb-4 text-sm leading-relaxed"
-                  v-html="post.description"
-                ></p>
-              </div>
-              <div class="px-6 py-4 bg-secondary border-t border-light">
-                <a
-                  :href="post.link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center text-primary hover:text-primary-dark transition-colors group"
-                >
-                  阅读全文
-                  <svg
-                    class="w-4 h-4 ml-1 transform transition-transform group-hover:translate-x-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 7l5 5m0 0l-5 5m5-5H6"
-                    />
-                  </svg>
-                </a>
-              </div>
-            </article>
-          </PageTransition>
+                  v-html="post.summary"
+                ></div>
         </div>
-
-        <!-- 分页控件优化 -->
-        <div
-          v-if="totalPages > 1"
-          class="flex justify-center items-center space-x-3 mt-12"
-        >
+        <div class="px-6 py-4 bg-secondary border-t border-light">
           <button
-            @click="prevPage"
-            :disabled="currentPage === 1"
-            class="px-4 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
+            @click="openMarkdown(post)"
+            class="inline-flex items-center text-primary hover:text-primary-dark transition-colors group"
           >
+            阅读全文
+            <svg
+              class="w-4 h-4 ml-1 transform transition-transform group-hover:translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
+          </button>
+        </div>
+        </article>
+        </PageTransition>
+      </div>
+
+      <!-- 分页控件优化 -->
+      <div
+        v-if="totalPages > 1"
+        class="flex justify-center items-center space-x-3 mt-12"
+      >
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 1"
+          class="px-4 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
+        >
             <span class="flex items-center">
               <svg
                 class="w-4 h-4 mr-1"
@@ -210,27 +219,27 @@ function formatDate(date: Date): string {
               </svg>
               上一页
             </span>
-          </button>
-          <div class="flex space-x-2">
-            <button
-              v-for="page in pageNumbers"
-              :key="page"
-              @click="changePage(page)"
-              :class="[
+        </button>
+        <div class="flex space-x-2">
+          <button
+            v-for="page in pageNumbers"
+            :key="page"
+            @click="changePage(page)"
+            :class="[
                 'w-10 h-10 rounded-lg flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-primary/50',
                 currentPage === page
                   ? 'bg-primary text-white'
                   : 'border-2 border-gray-300 dark:border-gray-600 hover:border-primary hover:text-primary',
               ]"
-            >
-              {{ page }}
-            </button>
-          </div>
-          <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="px-4 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
           >
+            {{ page }}
+          </button>
+        </div>
+        <button
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+          class="px-4 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
+        >
             <span class="flex items-center">
               下一页
               <svg
@@ -247,31 +256,38 @@ function formatDate(date: Date): string {
                 />
               </svg>
             </span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 空状态 -->
-      <div
-        v-if="!loading && !error && posts.length === 0"
-        class="text-center py-20"
-      >
-        <svg
-          class="w-20 h-20 mx-auto text-gray-400 mb-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-          />
-        </svg>
-        <p class="text-gray-500 dark:text-gray-400 text-lg">暂无博客文章</p>
+        </button>
       </div>
     </div>
+
+    <!-- 空状态 -->
+    <div
+      v-if="!loading && !error && posts.length === 0"
+      class="text-center py-20"
+    >
+      <svg
+        class="w-20 h-20 mx-auto text-gray-400 mb-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        />
+      </svg>
+      <p class="text-gray-500 dark:text-gray-400 text-lg">暂无博客文章</p>
+    </div>
+  </div>
+
+  <!-- Markdown 模态框 -->
+  <MarkdownModal
+    :isOpen="showModal"
+    :markdownContent="selectedMarkdown"
+    @close="closeModal"
+  />
   </div>
 </template>
 

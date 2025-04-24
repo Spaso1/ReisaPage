@@ -135,15 +135,6 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen flex flex-col">
-    <!-- 开发环境工具栏 -->
-    <div v-if="isDev" class="fixed bottom-4 right-4 z-50">
-      <button
-        class="px-4 py-2 bg-red-500 text-white rounded-lg shadow-lg hover:bg-red-600 transition-colors"
-        @click="clearNoticeCache"
-      >
-        清除公告缓存
-      </button>
-    </div>
 
     <TheHeader />
     <main class="flex-grow pt-16 md:pt-20">
