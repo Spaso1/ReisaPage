@@ -12,7 +12,7 @@
         >
           <span>© {{ currentYear }}</span>
           <a
-            href="https://www.mmm.sd/"
+            href="https://www.godsever.cn/"
             target="_blank"
             class="font-medium hover:text-blue-500 transition-colors"
           >

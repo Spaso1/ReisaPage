@@ -7,7 +7,6 @@ import TheFooter from "./components/layout/TheFooter.vue";
 import PageTransition from "./components/PageTransition.vue";
 import Toast from "./components/ui/Toast.vue";
 import Modal from "./components/ui/Modal.vue";
-import { noticeConfig } from "./config/notice";
 import type { NoticeButton } from "./types/notice";
 import { siteConfig } from "@/config";
 import { siteInfo } from "./config/site-info";
@@ -53,15 +52,6 @@ const showNotice = ref(false);
 // 处理按钮点击
 const handleNoticeAction = (button: NoticeButton) => {
   const now = Date.now();
-  const showAfter = button.showAfter ?? noticeConfig.defaultShowAfter;
-
-  // 设置下次显示时间
-  if (showAfter !== undefined && showAfter !== null) {
-    localStorage.setItem(
-      `notice_${noticeConfig.id}`,
-      showAfter === "refresh" ? "refresh" : String(now + showAfter),
-    );
-  }
 
   // 处理按钮动作
   switch (button.action) {
@@ -89,41 +79,8 @@ const handleNoticeAction = (button: NoticeButton) => {
   }
 };
 
-// 检查是否显示公告
-const checkNotice = () => {
-  // 如果公告被禁用，直接返回
-  if (!noticeConfig.enabled) return;
-
-  const nextShowTime = localStorage.getItem(`notice_${noticeConfig.id}`);
-
-  // 首次访问时显示公告
-  if (!nextShowTime) {
-    showNotice.value = true;
-    return;
-  }
-
-  // 如果是数字时间戳，检查是否已过期
-  if (nextShowTime !== "refresh") {
-    const showTime = Number(nextShowTime);
-    if (!isNaN(showTime) && Date.now() < showTime) {
-      return;
-    }
-  }
-
-  // 如果是 refresh 或者时间已过，显示公告
-  if (nextShowTime === "refresh") {
-    showNotice.value = true;
-  }
-};
-
-// 清除公告缓存
-const clearNoticeCache = () => {
-  localStorage.removeItem(`notice_${noticeConfig.id}`);
-  checkNotice();
-};
 
 onMounted(() => {
-  checkNotice();
   // 打印控制台信息
   printConsoleInfo({
     text: siteInfo.text,
@@ -135,7 +92,6 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen flex flex-col">
-
     <TheHeader />
     <main class="flex-grow pt-16 md:pt-20">
       <router-view v-slot="{ Component }">
@@ -146,37 +102,7 @@ onMounted(() => {
     </main>
     <TheFooter />
     <Toast />
-    <Modal
-      v-model:show="showNotice"
-      :title="noticeConfig.title"
-      :width="noticeConfig.width"
-      :mask-closable="noticeConfig.maskClosable"
-      :show-close="noticeConfig.showClose"
-      :show-fireworks="true"
-    >
-      <div v-html="noticeConfig.content"></div>
-
-      <template #footer>
-        <div class="flex justify-end gap-3">
-          <button
-            v-for="button in noticeConfig.buttons"
-            :key="button.text"
-            class="px-4 py-2 text-sm font-medium rounded-md transition-colors"
-            :class="{
-              'text-white bg-primary hover:bg-primary-dark':
-                button.type === 'primary',
-              'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600':
-                button.type === 'secondary',
-            }"
-            @click="handleNoticeAction(button)"
-          >
-            {{ button.text }}
-          </button>
-        </div>
-      </template>
-    </Modal>
   </div>
-
 </template>
 
 <style scoped>
@@ -186,6 +112,8 @@ onMounted(() => {
   background-size: cover; /* 背景图片覆盖整个元素 */
   background-position: center; /* 背景图片居中 */
   background-repeat: no-repeat; /* 防止背景图片重复 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 .min-h-screen::before {
@@ -201,5 +129,7 @@ onMounted(() => {
   background-repeat: no-repeat; /* 防止背景图片重复 */
   opacity: 0.3; /* 调整透明度 */
   z-index: -1; /* 确保伪元素在内容下方 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 </style>

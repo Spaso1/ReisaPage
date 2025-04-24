@@ -93,11 +93,24 @@ export default defineConfig({
     },
   },
   server: {
+    host: "0.0.0.0", // 监听所有网络接口
+    port: 5173, // 确保端口设置正确
     proxy: {
       "/api": {
         target: "https://mais.godserver.cn/api",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "Mozilla/5.0",
+          "Cache-Control": "no-cache",
+          "Pragma": "no-cache"
+        },
+      },
+      "/sys": {
+        target: "http://www.godserver.cn:54781",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/sys/, ''),
         headers: {
           Accept: "application/json",
           "User-Agent": "Mozilla/5.0",
