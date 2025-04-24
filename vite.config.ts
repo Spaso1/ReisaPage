@@ -94,12 +94,12 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/rss.xml": {
-        target: "https://www.godserver.cn",
+      "/api": {
+        target: "https://mais.godserver.cn/api",
         changeOrigin: true,
-        rewrite: (path) => path + '?t=' + Date.now(),
+        rewrite: (path) => path.replace(/^\/api/, ''),
         headers: {
-          Accept: "application/xml, text/xml, */*",
+          Accept: "application/json",
           "User-Agent": "Mozilla/5.0",
           "Cache-Control": "no-cache",
           "Pragma": "no-cache"

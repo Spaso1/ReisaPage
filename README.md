@@ -31,7 +31,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/acanyo/home-for-vue.git
+git clone https://github.com/Spaso1/ReisaPage.git
 
 # 安装依赖
 pnpm install

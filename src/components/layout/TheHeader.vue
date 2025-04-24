@@ -49,7 +49,7 @@ const navItems = [
   { name: "技能", path: "/skills" },
   { name: "博客", path: "/blog" },
   { name: "联系", path: "/contact" },
-  { name: "FindMaimai" , path: "/maimai"}
+  { name: "服务状态" , path: "/maimai"}
 ];
 
 const toggleMenu = () => {

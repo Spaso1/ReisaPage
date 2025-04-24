@@ -86,10 +86,10 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/maimai",
-    name: "FindMaimai",
-    component: () => import("@/views/MaimaiView.vue"),
+    name: "服务状态",
+    component: () => import("@/views/Server.vue"),
     meta: {
-      title: "FindMaimai",
+      title: "服务状态",
       transition: "scale",
     },
   }
