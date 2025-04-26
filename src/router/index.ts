@@ -92,6 +92,15 @@ const routes: RouteRecordRaw[] = [
       title: "服务状态",
       transition: "scale",
     },
+  },
+  {
+    path: "/mapmaimai",
+    name: "舞萌机厅",
+    component: () => import("@/views/Map.vue"),
+    meta: {
+      title: "舞萌机厅",
+      transition: "scale",
+    },
   }
 ];
 
