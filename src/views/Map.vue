@@ -1,18 +1,44 @@
 <template>
   <div class="map-container">
-    <BaiduMap
-      :center="[121.48, 31.22]"
-      :zoom="14"
-    />
+    <component :is="currentComponent" v-bind="componentProps" />
   </div>
 </template>
 
 <script>
 import BaiduMap from '@/views/BaiduMap.vue'
+import AnotherMapComponent from '@/views/AnotherMapComponent.vue' // 假设这是另一个组件
 
 export default {
   components: {
-    BaiduMap
+    BaiduMap,
+    AnotherMapComponent
+  },
+  data() {
+    return {
+      currentComponent: 'BaiduMap',
+      componentProps: {}
+    }
+  },
+  created() {
+    this.determineComponent()
+  },
+  methods: {
+    determineComponent() {
+      const type = this.$route.query.type
+      const lo = this.$route.query.lo
+      const la = this.$route.query.la
+      const city = this.$route.query.city
+      if (type === 'phone') {
+        this.currentComponent = 'AnotherMapComponent'
+        this.componentProps = { type: 'phone' ,
+                                lo :  lo,
+                                la :  la,
+                                city : city
+        } // 传递参数给组件
+      } else {
+        this.currentComponent = 'BaiduMap'
+      }
+    }
   }
 }
 </script>
@@ -28,6 +54,12 @@ export default {
 
 /* 确保 BaiduMap 组件占满容器 */
 .baidu-map-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* 如果 AnotherMapComponent 也有样式需求，可以在这里添加 */
+.another-map-container {
   width: 100%;
   height: 100%;
 }

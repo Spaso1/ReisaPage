@@ -102,6 +102,7 @@ const routes: RouteRecordRaw[] = [
       transition: "scale",
     },
   }
+
 ];
 
 const router = createRouter({
