@@ -108,7 +108,7 @@ export default defineConfig({
         },
       },
       "/sys": {
-        target: "http://www.godserver.cn:54781",
+        target: "http://top.godserver.cn:54781",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/sys/, ''),
         headers: {
