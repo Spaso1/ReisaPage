@@ -97,7 +97,7 @@ export default defineConfig({
     port: 5173, // 确保端口设置正确
     proxy: {
       "/api": {
-        target: "https://mais.godserver.cn/api",
+        target: "http://mai.godserver.cn:11451/api",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
         headers: {
