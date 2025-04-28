@@ -95,9 +95,10 @@ export default defineConfig({
   server: {
     host: "0.0.0.0", // 监听所有网络接口
     port: 5173, // 确保端口设置正确
+    allowedHosts: ["w.godserver.cn",'godserver.cn','www.godserver.cn','rbq.college'], // 允许的主机列表
     proxy: {
       "/api": {
-        target: "http://mai.godserver.cn:11451/api",
+        target: "https://mais.godserver.cn/api",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
         headers: {

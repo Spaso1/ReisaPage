@@ -72,7 +72,7 @@ const structuredData = {
         <div class="mb-6">
           <div class="relative inline-block avatar-container">
             <img
-              src="http:///cdns.godserver.cn/resource/static/Image_1916058994254974.jpg"
+              src="https:///cdn.godserver.cn/resource/static/Image_1916058994254974.jpg"
               alt="头像"
               class="w-24 h-24 md:w-32 md:h-32 rounded-full shadow-xl border-4 border-white dark:border-gray-700 transition-all duration-300 avatar"
             />

@@ -141,7 +141,7 @@ export default {
             this.map.centerAndZoom(point, 16);
 
             // 创建自定义图标
-            const myIcon = new BMap.Icon('http://cdns.godserver.cn/resource/static/mai/pic/UI_MSS_Allclear_Icon_AP.png.png', new BMap.Size(32, 32), {
+            const myIcon = new BMap.Icon('https://cdn.godserver.cn/resource/static/mai/pic/UI_MSS_Allclear_Icon_AP.png.png', new BMap.Size(32, 32), {
               anchor: new BMap.Size(16, 16), // 图标锚点
               imageSize: new BMap.Size(32, 32) // 图标实际大小
             });
@@ -258,7 +258,7 @@ export default {
       if (!this.map) return;
 
       // 创建自定义图标
-      const myIcon = new BMap.Icon('http://cdns.godserver.cn/resource/static/mai/pic/SD.png', new BMap.Size(70, 26), {
+      const myIcon = new BMap.Icon('https://cdn.godserver.cn/resource/static/mai/pic/SD.png', new BMap.Size(70, 26), {
         anchor: new BMap.Size(70, 26), // 图标锚点
         imageSize: new BMap.Size(70, 26) // 图标实际大小
       });
