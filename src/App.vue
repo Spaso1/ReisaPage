@@ -108,7 +108,7 @@ onMounted(() => {
 <style scoped>
 .min-h-screen {
   position: relative; /* 添加相对定位 */
-  background-image: url('https://cdn.godserver.cn/resource/static/1C6F3506CAFAE1443024752BFC4B5302.jpg');
+  background-image: url('http://cdns.godserver.cn/resource/static/1C6F3506CAFAE1443024752BFC4B5302.jpg');
   background-size: cover; /* 背景图片覆盖整个元素 */
   background-position: center; /* 背景图片居中 */
   background-repeat: no-repeat; /* 防止背景图片重复 */
