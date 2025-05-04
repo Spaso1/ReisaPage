@@ -3,6 +3,7 @@
     <div v-if="loading">加载中...</div>
     <div v-else-if="error">加载失败: {{ error }}</div>
     <div v-else class="server-info-wrapper">
+
       <div class="stats-container">
         <p>总调用量: {{ stats.total }}</p>
         <p>今日调用量: {{ stats.day_total }}</p>
@@ -10,46 +11,48 @@
 
       <div class="server-info-container">
         <h2 class="server-info-title">服务器监控信息</h2>
-        <div v-if="serverInfo">
-          <p>CPU 核心数: {{ serverInfo.cpuCores }}</p>
-          <p>CPU 名称: {{ serverInfo.cpuName }}</p>
-          <h3>CPU 核心使用率</h3>
 
-          <div v-if="serverInfo.coreUsages.length" class="cards-grid">
-            <Card
-              v-for="(usage, index) in serverInfo.coreUsages"
-              :key="index"
-              :label="`核心 ${index + 1}`"
-              :value="formattedCoreUsage(usage)"
-            />
-          </div>
-          <p>总内存: {{ formattedTotalMemoryGB }} GB</p>
-          <p>可用内存: {{ formattedFreeMemoryGB }} GB</p>
+        <!-- CPU 核心使用率 -->
+        <h3>CPU 核心使用率</h3>
+        <div v-if="mergedCoreUsages.length" class="cards-grid">
           <Card
-            label="内存使用率"
-            :value="formattedMemoryUsagePercentage"
+            v-for="(usage, index) in mergedCoreUsages"
+            :key="index"
+            :label="`核心 ${index + 1}`"
+            :value="formattedCoreUsage(usage)"
           />
-          <p>总磁盘空间: {{ formattedTotalDiskSpaceGB }} GB</p>
-          <p>可用磁盘空间: {{ formattedFreeDiskSpaceGB }} GB</p>
-          <h3>磁盘信息</h3>
+        </div>
 
-          <div v-if="serverInfo.disks.length" class="cards-grid">
-            <Card
-              v-for="(disk, index) in serverInfo.disks"
-              :key="index"
-              :label="disk.name"
-              :value="formattedDiskUsagePercentage(disk)"
-            />
-          </div>
-          <p>操作系统名称: {{ serverInfo.osName }}</p>
-          <p>操作系统版本: {{ serverInfo.osVersion }}</p>
-          <p>网络适配器: {{ serverInfo.networkAdapters.join(', ') }}</p>
-          <p v-if="serverInfo.gpus.length">GPU: {{ serverInfo.gpus.join(', ') }}</p>
-          <p v-else>GPU: 无</p>
+        <!-- 内存信息（每个服务器单独显示一行） -->
+        <h3>内存信息</h3>
+        <div v-for="(server, index) in serverInfos" :key="index">
+          <p>服务器 {{ index + 1 }} - 总内存: {{ formattedTotalMemoryGB(server) }} GB</p>
+          <p>服务器 {{ index + 1 }} - 可用内存: {{ formattedFreeMemoryGB(server) }} GB</p>
+          <Card label="内存使用率" :value="formattedMemoryUsagePercentage(server)" />
         </div>
-        <div v-else>
-          <p>加载服务器信息中...</p>
+
+        <!-- 磁盘信息 -->
+        <h3>磁盘信息</h3>
+        <div class="cards-grid">
+          <Card
+            v-for="(disk, index) in allDisks"
+            :key="index"
+            :label="disk.name"
+            :value="`${formattedDiskUsagePercentage(disk)}`"
+          />
         </div>
+
+        <!-- GPU -->
+        <h3>GPU</h3>
+        <p v-for="(gpu, index) in allGpus" :key="index">{{ gpu }}</p>
+
+        <!-- 操作系统版本 -->
+        <h3>操作系统版本</h3>
+        <p v-for="(os, index) in allOsVersions" :key="index">{{ os }}</p>
+
+        <!-- 网络适配器 -->
+        <h3>网络适配器</h3>
+        <p v-for="(adapter, index) in allNetworkAdapters" :key="index">{{ adapter }}</p>
       </div>
     </div>
   </div>
@@ -61,19 +64,15 @@ import Card from '@/components/Card.vue';
 
 export default {
   name: 'MaimaiView',
-  components: {
-    Card,
-  },
+  components: { Card },
   data() {
     return {
       data: null,
-      stats: {
-        total: null,
-        day_total: null,
-      },
-      serverInfo: null,
+      stats: { total: null, day_total: null },
+      serverInfos: [],
       loading: true,
       error: null,
+      pollingInterval: null
     };
   },
   mounted() {
@@ -85,33 +84,36 @@ export default {
     this.stopPolling();
   },
   computed: {
-    formattedCoreUsages() {
-      if (!this.serverInfo || !this.serverInfo.coreUsages) return '';
-      return this.serverInfo.coreUsages.map(usage => usage.toFixed(2)).join(', ');
+    // 合并所有 CPU 核心使用率
+    mergedCoreUsages() {
+      return this.serverInfos.flatMap(server => server.coreUsages || []);
     },
-    formattedTotalMemoryGB() {
-      return this.serverInfo ? this.serverInfo.totalMemoryGB.toFixed(2) : '';
+
+    // 所有磁盘（不做去重）
+    allDisks() {
+      return this.serverInfos.flatMap(server => server.disks || []);
     },
-    formattedFreeMemoryGB() {
-      return this.serverInfo ? this.serverInfo.freeMemoryGB.toFixed(2) : '';
+
+    // 所有 GPU（不做去重）
+    allGpus() {
+      return this.serverInfos.flatMap(server => server.gpus || []);
     },
-    formattedTotalDiskSpaceGB() {
-      return this.serverInfo ? this.serverInfo.totalDiskSpaceGB.toFixed(2) : '';
+
+    // 所有操作系统版本（不做去重）
+    allOsVersions() {
+      return this.serverInfos.map(server => server.osVersion).filter(Boolean);
     },
-    formattedFreeDiskSpaceGB() {
-      return this.serverInfo ? this.serverInfo.freeDiskSpaceGB.toFixed(2) : '';
-    },
-    formattedMemoryUsagePercentage() {
-      if (!this.serverInfo) return 0;
-      return ((this.serverInfo.totalMemoryGB - this.serverInfo.freeMemoryGB) / this.serverInfo.totalMemoryGB * 100).toFixed(2);
-    },
+
+    // 所有网络适配器（不做去重）
+    allNetworkAdapters() {
+      return this.serverInfos.flatMap(server => server.networkAdapters || []);
+    }
   },
   methods: {
     async fetchData() {
       try {
         const response = await axios.get('/api/mai/v1/info');
         this.data = response.data;
-        console.log(response.data);
         this.stats.total = response.data.total;
         this.stats.day_total = response.data.day_total;
       } catch (error) {
@@ -122,31 +124,47 @@ export default {
     },
     async fetchServerInfo() {
       try {
-        const response = await axios.get('/sys/api/sys/v1/all');
-        console.log(response.data); // 输出真实数据
-        this.serverInfo = response.data;
+        const [res1, res2] = await Promise.all([
+          axios.get('/sys1/api/sys/v1/all').catch(() => null),
+          axios.get('/sys2/api/sys/v1/all').catch(() => null)
+        ]);
+        this.serverInfos = [];
+        if (res1) this.serverInfos.push(res1.data);
+        if (res2) this.serverInfos.push(res2.data);
       } catch (error) {
         this.error = error.message;
-        console.error(error); // 输出错误信息
+        console.error(error);
       }
     },
     startPolling() {
-      this.pollingInterval = setInterval(() => {
-        this.fetchServerInfo();
-      }, 10000);
+      this.pollingInterval = setInterval(() => this.fetchServerInfo(), 10000);
     },
     stopPolling() {
-      if (this.pollingInterval) {
-        clearInterval(this.pollingInterval);
-      }
+      if (this.pollingInterval) clearInterval(this.pollingInterval);
+    },
+    formattedTotalMemoryGB(server) {
+      return server?.totalMemoryGB ? server.totalMemoryGB.toFixed(2) : '';
+    },
+    formattedFreeMemoryGB(server) {
+      return server?.freeMemoryGB ? server.freeMemoryGB.toFixed(2) : '';
     },
     formattedDiskUsagePercentage(disk) {
-      return ((disk.totalSpaceGB - disk.freeSpaceGB) / disk.totalSpaceGB * 100).toFixed(2);
+      if (!disk || !disk.totalSpaceGB) return '0.00';
+      const usage = ((disk.totalSpaceGB - disk.freeSpaceGB) / disk.totalSpaceGB * 100).toFixed(2);
+      return `${usage}`;s
     },
+
+    // 内存使用率（保持原样）
+    formattedMemoryUsagePercentage(server) {
+      if (!server || !server.totalMemoryGB) return '0.00%';
+      const usage = (((server.totalMemoryGB - server.freeMemoryGB) / server.totalMemoryGB) * 100).toFixed(2);
+      return `${usage}`;
+    },
+
     formattedCoreUsage(usage) {
       return usage.toFixed(2);
-    },
-  },
+    }
+  }
 };
 </script>
 

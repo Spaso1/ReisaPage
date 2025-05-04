@@ -108,10 +108,21 @@ export default defineConfig({
           "Pragma": "no-cache"
         },
       },
-      "/sys": {
+      "/sys1": {
         target: "http://top.godserver.cn:54781",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/sys/, ''),
+        rewrite: (path) => path.replace(/^\/sys1/, ''),
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "Mozilla/5.0",
+          "Cache-Control": "no-cache",
+          "Pragma": "no-cache"
+        },
+      },
+      "/sys2": {
+        target: "http://43.153.174.191:54781",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/sys2/, ''),
         headers: {
           Accept: "application/json",
           "User-Agent": "Mozilla/5.0",

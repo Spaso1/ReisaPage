@@ -76,15 +76,6 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/contact",
-    name: "contact",
-    component: () => import("@/views/ContactView.vue"),
-    meta: {
-      title: "联系",
-      transition: "scale",
-    },
-  },
-  {
     path: "/maimai",
     name: "服务状态",
     component: () => import("@/views/Server.vue"),

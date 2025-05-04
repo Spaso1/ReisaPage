@@ -17,10 +17,7 @@ interface FooterConfig {
 
 export const footerConfig: FooterConfig = {
   links: [
-    {
-      text: "联系",
-      to: "/contact",
-    },
+
 
     {
       text: "博客",
