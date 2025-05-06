@@ -92,8 +92,16 @@ const routes: RouteRecordRaw[] = [
       title: "舞萌机厅",
       transition: "scale",
     },
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import("@/views/Login.vue"),
+    meta: {
+      title: "登录",
+      transition: "scale",
+    },
   }
-
 ];
 
 const router = createRouter({
