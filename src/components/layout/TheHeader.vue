@@ -6,6 +6,37 @@ import ThemeToggle from "@/components/ThemeToggle.vue";
 const route = useRoute();
 const isMenuOpen = ref(false);
 
+// 用户信息
+const userInfo = ref<{ name: string; avatar: string } | null>(null);
+
+// 获取用户信息
+const fetchUserInfo = async () => {
+
+  try {
+    const response = await fetch("/cen/user/info");
+    if (response.ok) {
+      const data = await response.json();
+      userInfo.value = data;
+    } else {
+      userInfo.value = null;
+    }
+  } catch (error) {
+    console.error("获取用户信息失败:", error);
+
+    userInfo.value = null;
+
+    const data = "{\n" +
+      "  \"name\": \"Reisa\",\n" +
+      "  \"avatar\": \"http://cdns.godserver.cn/resource/static/Image_1916058994254974.jpg\"\n" +
+      "}\n";
+    const data2 = JSON.parse(data); // ✅ 转换为对象
+    userInfo.value = data2;
+    console.log("实例数据", userInfo.value.avatar); // ✅ 可以正确输出 URL
+
+  }
+
+};
+
 const closeMenu = () => {
   isMenuOpen.value = false;
 };
@@ -25,6 +56,7 @@ const handleClickOutside = (event: MouseEvent) => {
 
 // 在组件挂载时添加事件监听
 onMounted(() => {
+  fetchUserInfo(); // 页面加载时获取用户信息
   window.addEventListener("click", handleClickOutside);
   window.addEventListener("keydown", handleKeydown);
 });
@@ -49,8 +81,8 @@ const navItems = [
   { name: "技能", path: "/skills" },
   { name: "博客", path: "/blog" },
   { name: "联系", path: "/contact" },
-  { name: "服务状态" , path: "/maimai"},
-  { name: "舞萌机厅",path: "/mapmaimai"}
+  { name: "服务状态", path: "/maimai" },
+  { name: "舞萌机厅", path: "/mapmaimai" },
 ];
 
 const toggleMenu = () => {
@@ -59,9 +91,7 @@ const toggleMenu = () => {
 </script>
 
 <template>
-  <header
-    class="fixed w-full top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
-  >
+  <header class="fixed w-full top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
     <nav class="container mx-auto px-4 py-3 md:py-4">
       <div class="flex items-center justify-between">
         <router-link to="/" class="logo-link group relative overflow-hidden">
@@ -83,9 +113,28 @@ const toggleMenu = () => {
           >
             {{ item.name }}
           </router-link>
+          <div v-if="userInfo">
+            <div class="flex items-center space-x-2">
+              <img
+                :src="userInfo.avatar"
+                alt="头像"
+                class="w-8 h-8 rounded-full object-cover"
+              />
+              <span class="text-gray-600 dark:text-gray-300">{{ userInfo.name }}</span>
+            </div>
+          </div>
+          <div v-else>
+            <div class="flex space-x-2">
+              <button
+                @click="$router.push('/login')"
+                class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                登录 / 注册
+              </button>
+            </div>
+          </div>
           <ThemeToggle />
         </div>
-
         <!-- 移动端菜单按钮 -->
         <div class="md:hidden flex items-center space-x-2">
           <ThemeToggle />
@@ -94,12 +143,7 @@ const toggleMenu = () => {
             @click.stop="toggleMenu"
             aria-label="Toggle menu"
           >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 v-if="!isMenuOpen"
                 stroke-linecap="round"
@@ -142,6 +186,23 @@ const toggleMenu = () => {
             >
               {{ item.name }}
             </router-link>
+
+            <!-- 移动端用户信息 -->
+            <div v-if="userInfo" class="flex items-center px-4 py-2 space-x-2">
+              <img
+                :src="userInfo.avatar"
+                alt="头像"
+                class="w-8 h-8 rounded-full object-cover"
+              />
+              <span>{{ userInfo.name }}</span>
+            </div>
+            <div v-else class="flex flex-col space-y-1 px-4 py-2">
+              <button
+                @click="$router.push('/login')"
+              >
+                登录 / 注册
+              </button>
+            </div>
           </div>
         </div>
       </transition>
@@ -156,7 +217,7 @@ const toggleMenu = () => {
 
 .mobile-menu {
   @apply absolute top-full left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm
-    border-t border-gray-200 dark:border-gray-700 shadow-lg;
+  border-t border-gray-200 dark:border-gray-700 shadow-lg;
 }
 
 /* 移动端导航链接悬停效果 */
@@ -191,3 +252,4 @@ const toggleMenu = () => {
   animation: gradient 3s linear infinite;
 }
 </style>
+

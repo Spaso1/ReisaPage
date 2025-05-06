@@ -130,6 +130,17 @@ export default defineConfig({
           "Pragma": "no-cache"
         },
       },
+      "/cen": {
+        target: "http://127.0.0.1/api",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/cen/, ''),
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "Mozilla/5.0",
+          "Cache-Control": "no-cache",
+          "Pragma": "no-cache"
+        },
+      },
     },
   },
   define: {
