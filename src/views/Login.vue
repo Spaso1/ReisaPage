@@ -61,11 +61,13 @@ const submitForm = async () => {
           // 触发刷新用户信息事件
           eventBus.emit('refresh-user-info');
           await router.push("/");
+        }else{
+          error.value = data.content;
         }
     } else if (data.type === "reg") {
       isRegister.value = true;
-      const decodedKey = atob(data.content); // Base64 解码
-      const issuer = "ReisaPage";
+      const decodedKey = atob(data.content); // Base64 解码s
+      const issuer = "ReisaPage - " + data.contentType;
       const totpUri = `otpauth://totp/${encodeURIComponent(issuer)}?secret=${encodeURIComponent(decodedKey)}&issuer=${encodeURIComponent(issuer)}`;
       qrCodeText.value = totpUri;
       localStorage.removeItem("sessionId");
@@ -111,7 +113,7 @@ const request = async (url: string, options: RequestInit = {}) => {
 
       <!-- 显示二维码 -->
       <div v-if="isRegister" class="text-center">
-        <p class="mb-4 text-green-500">账号管理我们使用TOP无密码登录! 请一定要使用 2FA 应用扫描下方二维码进行绑定：</p>
+        <p class="mb-4 text-green-500">账号管理我们使用TOP登录! 请一定要使用 2FA 应用扫描下方二维码进行绑定：</p>
         <div class="mx-auto w-48 h-48 flex items-center justify-center bg-white p-2 rounded-md">
           <QRCode :value="qrCodeText" size="200" />
         </div>
