@@ -2,6 +2,10 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
+import QRCode from "qrcode.vue";
+import eventBus from "@/eventBus";
+const __qrcode = QRCode;
+
 const router = useRouter();
 
 // 表单数据
@@ -12,18 +16,18 @@ const error = ref("");
 
 // 登录状态相关
 const isRegister = ref(false);
-const qrCodeUrl = ref("");
+const qrCodeText = ref(""); // 存储 otpauth://totp 链接
+const sessionId = ref("");
 
 // 检查是否已登录
 const checkLoginStatus = async () => {
   try {
-    const response = await fetch("/cen/user/info");
+    const response = await request("/cen/user/info");
     if (response.ok) {
-      // 已登录，跳转首页
-      router.push("/");
+      //router.push("/");
     }
   } catch (e) {
-    // 未登录，继续显示登录页
+    // 未登录
   }
 };
 
@@ -33,7 +37,7 @@ const submitForm = async () => {
   error.value = "";
 
   try {
-    const response = await fetch("/cen/auth/login", {
+    const response = await request("/cen/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,12 +54,26 @@ const submitForm = async () => {
       throw new Error(data.message || "登录失败");
     }
 
-    if (data.status === "login") {
-      alert("登录成功！");
-      router.push("/");
-    } else if (data.status === "register") {
+    if (data.type === "login") {
+        if (data.code == 200) {
+          localStorage.removeItem("sessionId");
+          localStorage.setItem("sessionId", data.sessionId);
+          // 触发刷新用户信息事件
+          eventBus.emit('refresh-user-info');
+          await router.push("/");
+        }
+    } else if (data.type === "reg") {
       isRegister.value = true;
-      qrCodeUrl.value = data.qrCodeUrl;
+      const decodedKey = atob(data.content); // Base64 解码
+      const issuer = "ReisaPage";
+      const totpUri = `otpauth://totp/${encodeURIComponent(issuer)}?secret=${encodeURIComponent(decodedKey)}&issuer=${encodeURIComponent(issuer)}`;
+      qrCodeText.value = totpUri;
+      localStorage.removeItem("sessionId");
+
+      localStorage.setItem("sessionId", data.sessionId);
+
+      // 触发刷新用户信息事件
+      eventBus.emit('refresh-user-info');
     }
   } catch (err: any) {
     error.value = err.message;
@@ -67,17 +85,36 @@ const submitForm = async () => {
 onMounted(() => {
   checkLoginStatus();
 });
+
+// 封装统一请求函数
+const request = async (url: string, options: RequestInit = {}) => {
+  const sessionId = localStorage.getItem("sessionId");
+
+  const headers = new Headers(options.headers);
+
+  if (sessionId) {
+    headers.set("X-Session-ID", sessionId);
+  }
+
+  return fetch(url, {
+    ...options,
+    headers,
+  });
+};
 </script>
 
 <template>
+
   <div class="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
     <div class="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <h2 class="text-2xl font-bold text-center text-gray-800 dark:text-white">登录 / 注册</h2>
 
-      <!-- 二维码展示 -->
+      <!-- 显示二维码 -->
       <div v-if="isRegister" class="text-center">
-        <p class="mb-4 text-green-500">请使用 2FA 应用扫描下方二维码进行绑定：</p>
-        <img :src="qrCodeUrl" alt="2FA QR Code" class="mx-auto w-48 h-48" />
+        <p class="mb-4 text-green-500">账号管理我们使用TOP无密码登录! 请一定要使用 2FA 应用扫描下方二维码进行绑定：</p>
+        <div class="mx-auto w-48 h-48 flex items-center justify-center bg-white p-2 rounded-md">
+          <QRCode :value="qrCodeText" size="200" />
+        </div>
         <button @click="router.push('/')" class="mt-4 underline text-blue-500">
           返回首页
         </button>
@@ -88,35 +125,33 @@ onMounted(() => {
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">邮箱地址</label>
           <input
-            id="email"
-            v-model="email"
-            type="email"
-            required
-            placeholder="请输入邮箱"
-            class="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              id="email"
+              v-model="email"
+              type="email"
+              required
+              placeholder="请输入邮箱"
+              class="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           />
+
         </div>
 
         <div>
           <label for="codeOrPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            密码 / 6位验证码
+            6位验证码 / 或空
           </label>
           <input
-            id="codeOrPassword"
-            v-model="codeOrPassword"
-            type="text"
-            required
-            placeholder="密码或6位验证码"
-            minlength="6"
-            maxlength="6"
-            class="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              id="codeOrPassword"
+              v-model="codeOrPassword"
+              type="text"
+              placeholder="密码或6位验证码"
+              class="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           />
         </div>
 
         <button
-          type="submit"
-          :disabled="isLoading"
-          class="w-full px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md transition disabled:opacity-50"
+            type="submit"
+            :disabled="isLoading"
+            class="w-full px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md transition disabled:opacity-50"
         >
           {{ isLoading ? "处理中..." : "登录" }}
         </button>

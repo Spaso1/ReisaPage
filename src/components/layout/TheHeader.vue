@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import ThemeToggle from "@/components/ThemeToggle.vue";
+import eventBus from "@/eventBus";
 
 const route = useRoute();
 const isMenuOpen = ref(false);
@@ -13,7 +14,7 @@ const userInfo = ref<{ name: string; avatar: string } | null>(null);
 const fetchUserInfo = async () => {
 
   try {
-    const response = await fetch("/cen/user/info");
+    const response = await request("/cen/user/info");
     if (response.ok) {
       const data = await response.json();
       userInfo.value = data;
@@ -36,7 +37,20 @@ const fetchUserInfo = async () => {
   }
 
 };
+const request = async (url: string, options: RequestInit = {}) => {
+  const sessionId = localStorage.getItem("sessionId");
 
+  const headers = new Headers(options.headers);
+
+  if (sessionId) {
+    headers.set("X-Session-ID", sessionId);
+  }
+
+  return fetch(url, {
+    ...options,
+    headers,
+  });
+};
 const closeMenu = () => {
   isMenuOpen.value = false;
 };
@@ -59,13 +73,13 @@ onMounted(() => {
   fetchUserInfo(); // 页面加载时获取用户信息
   window.addEventListener("click", handleClickOutside);
   window.addEventListener("keydown", handleKeydown);
-});
+  eventBus.on('refresh-user-info', fetchUserInfo);});
 
 // 在组件卸载时移除事件监听，防止内存泄漏
 onUnmounted(() => {
   window.removeEventListener("click", handleClickOutside);
   window.removeEventListener("keydown", handleKeydown);
-});
+  eventBus.off('refresh-user-info', fetchUserInfo);});
 
 const navItems = [
   { name: "首页", path: "/" },
@@ -114,7 +128,7 @@ const toggleMenu = () => {
             {{ item.name }}
           </router-link>
           <div v-if="userInfo">
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-2 cursor-pointer"  @click="$router.push('/user')">
               <img
                 :src="userInfo.avatar"
                 alt="头像"

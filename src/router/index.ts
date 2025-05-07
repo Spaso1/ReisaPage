@@ -101,6 +101,15 @@ const routes: RouteRecordRaw[] = [
       title: "登录",
       transition: "scale",
     },
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: () => import("@/views/User.vue"),
+    meta: {
+      title: "用户",
+      transition: "scale",
+    },
   }
 ];
 
