@@ -109,7 +109,7 @@ const request = async (url: string, options: RequestInit = {}) => {
 
   <div class="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
     <div class="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <h2 class="text-2xl font-bold text-center text-gray-800 dark:text-white">登录 / 注册</h2>
+      <h2 class=" text-2xl font-bold text-center text-gray-800 dark:text-white">登录 / 注册</h2>
 
       <!-- 显示二维码 -->
       <div v-if="isRegister" class="text-center">
@@ -163,3 +163,10 @@ const request = async (url: string, options: RequestInit = {}) => {
     </div>
   </div>
 </template>
+<style scoped>
+.container {
+  max-width: none !important;
+  width: 90vw;
+  height: 80vh;
+}
+</style>
