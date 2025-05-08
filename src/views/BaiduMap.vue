@@ -18,6 +18,26 @@
         <button @click="zoomOut">缩小</button>
         <button @click="locateMe">定位</button>
       </div>
+
+      <div class="map-detail-box">
+        <input
+          v-model="detailKeyword"
+          type="text"
+          placeholder="输入关键字搜索"
+          @keyup.enter="handleDetailSearch"
+        />
+        <button @click="handleDetailSearch">机厅数据搜索(Earth beta)</button>
+
+        <!-- 新增 scroll-panel -->
+        <div class="scroll-panel" v-if="searchResults.length">
+          <ul class="search-results">
+            <li v-for="result in searchResults" :key="result.id" @click="showDetail(result)">
+              {{ result.name }} - {{ result.address }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -37,6 +57,8 @@ export default {
   },
   data() {
     return {
+      detailKeyword: '',
+      searchResults: [],
       map: null,
       searchKeyword: '',
       localSearch: null,
@@ -48,6 +70,7 @@ export default {
   },
   mounted() {
     this.initMap()
+
   },
   methods: {
     initMap() {
@@ -112,6 +135,55 @@ export default {
       if (this.searchKeyword.trim() && this.localSearch) {
         this.localSearch.search(this.searchKeyword);
       }
+    },
+    handleDetailSearch() {
+      const query = this.detailKeyword.trim();
+      if (!query) return;
+
+      fetch(`api/mai/v1/searchAll?query=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+          this.searchResults = data;
+        })
+        .catch(error => {
+          console.error('请求失败:', error);
+        });
+    },
+
+    showDetail(result) {
+// 判断是否坐标顺序是 [lat, lng]，如果是则交换
+      if (result.y > 90 || result.x < -90 || result.x > 90) {
+        // 很可能 x 是 lat，y 是 lng，交换顺序
+        const temp = result.x;
+        result.x = result.y;
+        result.y = temp;
+      }
+
+      const point = new BMap.Point(result.x, result.y); // 注意：百度地图坐标是{lng, lat}格式
+
+      this.map.centerAndZoom(point, 16);
+
+      const myIcon = new BMap.Icon('https://cdn.godserver.cn/resource/static/mai/pic/SD.png', new BMap.Size(70, 26), {
+        anchor: new BMap.Size(70, 26),
+        imageSize: new BMap.Size(70, 26)
+      });
+
+      const marker = new BMap.Marker(point, { icon: myIcon });
+      this.map.addOverlay(marker);
+
+      const infoWindowContent = `      <div>
+        <h3>${result.name}</h3>
+        <p>地址: ${result.address}</p>
+        <p>状态: ${result.isUse === 1 ? '可用' : '不可用'}</p>
+        <p>数量J: ${result.numJ}</p>
+        <p>总数: ${result.num + result.numJ}</p>
+      </div>
+    `;
+
+      const infoWindow = new BMap.InfoWindow(infoWindowContent);
+      marker.addEventListener('click', () => {
+        this.map.openInfoWindow(infoWindow, point);
+      });
     },
 
     handleSearchComplete(results) {
@@ -379,5 +451,76 @@ export default {
 .map-controls button:hover {
   background: #f0f0f0;
   transform: translateY(-1px);
+}
+.map-detail-box {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  resize: both;
+  overflow: auto;
+  min-width: 200px;
+  min-height: 50px;
+}
+
+
+.map-detail-box input {
+  width: 200px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+}
+
+.map-detail-box button {
+  margin-left: 8px;
+  padding: 8px 16px;
+  background: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.map-detail-box button:hover {
+  background: #40a9ff;
+}
+
+.search-results {
+  margin-top: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+.search-results li {
+  padding: 6px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.search-results li:hover {
+  background-color: #f0f0f0;
+}
+.scroll-panel {
+  max-height: 300px; /* 控制最大高度 */
+  overflow-y: auto;   /* 超出时显示滚动条 */
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+/* 可选：为滚动条添加自定义样式（兼容现代浏览器） */
+.scroll-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-panel::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
 }
 </style>

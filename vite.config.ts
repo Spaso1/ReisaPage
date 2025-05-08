@@ -131,7 +131,7 @@ export default defineConfig({
         },
       },
       "/cen": {
-        target: "http://192.168.106.177:34234/api",
+        target: "http://127.0.0.1:34234/api",//"http://192.168.106.177:34234/api",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/cen/, ''),
         headers: {
