@@ -2,12 +2,19 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
+const showBindDiv = ref(false); // 控制绑定操作的显示
+const bindingKey = ref("");
+const securityCode = ref("");
+
 const router = useRouter();
 
 // 用户信息类型定义
 interface UserInfo {
   name: string;
   avatar: string;
+  qqId: string;
+  mai_avatarId: string;
+  mai_userName : string;
 }
 
 // 本地临时值用于编辑
@@ -15,6 +22,9 @@ const tempName = ref("");
 const tempAvatar = ref("");
 const isEditingName = ref(false);
 const showAvatarDialog = ref(false);
+const tempMai_userName = ref("");
+const tempMai_AvatorId=ref("");
+const tempMai_qqId=ref("");
 
 // 用户信息状态
 const userInfo = ref<UserInfo | null>(null);
@@ -50,12 +60,46 @@ const handleLogout = () => {
   router.push("/login"); // 跳转到登录页
 };
 
+const bind = () => {
+  showBindDiv.value = true;
+};
+const handleBind = async () => {
+  if (!bindingKey.value || !securityCode.value) {
+    alert("请输入安全码和绑定Key");
+    return;
+  }
+  // 模拟绑定操作
+  console.log("绑定中...");
+  console.log("Binding Key:", bindingKey.value);
+  console.log("Security Code:", securityCode.value);
+
+  const urlString = `/api/qq/safeCoding?result=${bindingKey.value}&safecode=${securityCode.value}`;
+
+  try {
+    const response = await fetch(urlString, {method: "GET"});
+
+    if (!response.ok) {
+      alert("服务器返回错误");
+      return;
+    }
+
+    const rawDataString = await response.text();
+
+    fetchUserData(rawDataString);
+  } catch (error) {
+    console.error("网络请求失败:", error);
+    alert(`网络请求失败: ${error.message}`);
+  }
+  showBindDiv.value = false; // 隐藏绑定操作的 `div`
+};
 const saveUserInfo = async () => {
   if (!userInfo.value) return;
 
   userInfo.value.name = tempName.value;
   userInfo.value.avatar = tempAvatar.value;
-
+  userInfo.value.qqId = tempMai_qqId.value;
+  userInfo.value.mai_userName = tempMai_userName;
+  userInfo.value.mai_avatarId = tempMai_AvatorId;
   // 示例：发送到服务器更新数据（根据实际 API 调整）
   try {
     const response = await request("/cen/user/info", {
@@ -93,7 +137,41 @@ const request = async (url: string, options: RequestInit = {}) => {
     headers,
   });
 };
+const fetchUserData = async (qqData: string) => {
+  const userDataUrlString = `/api/qq/userData?qq=${qqData}`;
 
+  try {
+    const response = await fetch(userDataUrlString, { method: "GET" });
+
+    if (!response.ok) {
+      alert("用户数据服务器返回错误");
+      return;
+    }
+
+    const data = await response.json();
+
+    // 假设 UserData 类型定义如下
+    interface UserData {
+      userName: string;
+      iconId: number;
+      playerRating: number;
+    }
+
+    const userData: UserData = data;
+
+    tempMai_AvatorId.value = userData.iconId;
+    tempMai_qqId.value = qqData;
+    tempMai_userName.value = userData.userName;
+    console.log("iconId:", userData.iconId);
+    console.log("userName:", userData.userName);
+    await saveUserInfo();
+    alert("账号绑定成功");
+  } catch (error) {
+    console.error("解析用户数据失败:", error);
+    alert(`解析用户数据失败: ${error.message}`);
+  } finally {
+  }
+};
 const startEditingName = () => {
   isEditingName.value = true;
 };
@@ -172,13 +250,55 @@ onMounted(() => {
               <span class="font-medium text-white">退出登录</span>
             </div>
           </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- 保存卡片 -->
+            <div
+              @click="bind"
+              class="card-gradient rounded-lg p-6 hover:shadow-md transition-all cursor-pointer transform hover:-translate-y-1 transition-transform"
+            >
+              <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="font-medium text-white">绑定Bot</span>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <!-- 分割线 -->
-        <div class="border-t border-gray-800 dark:border-gray-700 mt-6"></div>
       </div>
     </div>
-
+    <div
+      v-if="showBindDiv"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
+        <h3 class="text-lg font-semibold mb-4">绑定账号</h3>
+        <input
+          v-model="bindingKey"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded mb-4 dark:bg-gray-700"
+          placeholder="输入绑定Key"
+        />
+        <input
+          v-model="securityCode"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded mb-4 dark:bg-gray-700"
+          placeholder="输入安全码"
+        />
+        <div class="flex justify-end space-x-3">
+          <button
+            @click="showBindDiv = false"
+            class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+          >
+            取消
+          </button>
+          <button
+            @click="handleBind"
+            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            确认绑定
+          </button>
+        </div>
+      </div>
+    </div>
     <!-- 无用户信息提示 -->
     <div v-else class="text-center text-gray-600 dark:text-gray-400 h-full flex flex-col justify-center">
       <p>未找到用户信息，请先登录。</p>
@@ -219,6 +339,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.card-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 .container {
   max-width: none !important;
   width: 90vw;

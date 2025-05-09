@@ -110,6 +110,15 @@ const routes: RouteRecordRaw[] = [
       title: "用户",
       transition: "scale",
     },
+  },
+  {
+    path: '/paika' ,
+    name: '排卡',
+    component: () => import("@/views/Paika.vue"),
+    meta: {
+      title: "排卡",
+      transition: "scale",
+    },
   }
 ];
 
