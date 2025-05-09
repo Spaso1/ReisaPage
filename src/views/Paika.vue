@@ -19,7 +19,7 @@
             <div class="card-content">
               <img :src="player.avatarURL" alt="Avatar" class="avatar" />
               <p class="player-name">{{ player.name }}</p>
-              <p v-if="index === 0" class="player-position">房主</p>
+              <p v-if="index === 0" class="player-position">一号位</p>
               <p v-if="index === 1" class="player-position">二号位</p>
             </div>
           </div>
