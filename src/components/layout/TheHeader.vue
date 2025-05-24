@@ -97,6 +97,8 @@ const navItems = [
   { name: "联系", path: "/contact" },
   { name: "服务状态", path: "/maimai" },
   { name: "舞萌机厅", path: "/mapmaimai" },
+  { name: "Earth", path: "/earth" },
+
 ];
 
 const toggleMenu = () => {

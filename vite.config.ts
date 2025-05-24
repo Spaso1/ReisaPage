@@ -5,6 +5,8 @@ import viteCompression from "vite-plugin-compression";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import { fontConfig } from "./src/config/font";
 
+import cesium from 'vite-plugin-cesium'
+
 export default defineConfig({
   base: "/",
   build: {
@@ -37,6 +39,7 @@ export default defineConfig({
     cssMinify: true,
   },
   plugins: [
+    cesium(),
     vue(),
     viteCompression({
       verbose: true,
@@ -141,6 +144,28 @@ export default defineConfig({
           "Pragma": "no-cache"
         },
       },
+      "/cdn": {
+        target: "https://cdn.godserver.cn/",//"http://192.168.106.177:34234/api",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/cdn/, ''),
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "Mozilla/5.0",
+          "Cache-Control": "no-cache",
+          "Pragma": "no-cache"
+        },
+      },
+        "/map": {
+            target: "https://api.map.baidu.com/",//"http://192.168.106.177:34234/api",
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/map/, ''),
+            headers: {
+                Accept: "application/json",
+                "User-Agent": "Mozilla/5.0",
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache"
+            },
+        },
     },
   },
   define: {

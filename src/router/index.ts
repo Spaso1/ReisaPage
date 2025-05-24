@@ -93,6 +93,16 @@ const routes: RouteRecordRaw[] = [
       transition: "scale",
     },
   },
+    {
+        path: "/earth",
+        name: "舞萌机厅",
+        component: () => import("@/views/Cesium.vue"),
+        meta: {
+            title: "舞萌机厅",
+            transition: "scale",
+        },
+    },
+
   {
     path: '/login',
     name: 'login',
