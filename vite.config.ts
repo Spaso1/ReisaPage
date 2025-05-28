@@ -8,171 +8,193 @@ import { fontConfig } from "./src/config/font";
 import cesium from 'vite-plugin-cesium'
 
 export default defineConfig({
-  base: "/",
-  build: {
-    outDir: "dist",
-    assetsDir: "assets",
-    minify: "terser",
-    sourcemap: false,
-    chunkSizeWarningLimit: 1500,
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ["console.log"],
-      },
-      format: {
-        comments: /@license/i,
-      },
-    },
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["vue", "vue-router"],
-        },
-        chunkFileNames: "assets/js/[name]-[hash].js",
-        entryFileNames: "assets/js/[name]-[hash].js",
-        assetFileNames: "assets/[ext]/[name]-[hash].[ext]",
-      },
-    },
-    cssCodeSplit: true,
-    cssMinify: true,
-  },
-  plugins: [
-    cesium(),
-    vue(),
-    viteCompression({
-      verbose: true,
-      disable: false,
-      threshold: 10240,
-      algorithm: "gzip",
-      ext: ".gz",
-    }),
-    ViteImageOptimizer({
-      test: /\.(jpe?g|png|gif|svg)$/i,
-      exclude: undefined,
-      include: undefined,
-      includePublic: true,
-      logStats: true,
-      ansiColors: true,
-      svg: {
-        multipass: true,
-        plugins: [
-          {
-            name: "preset-default",
-            params: {
-              overrides: {
-                removeViewBox: false,
-                removeEmptyAttrs: false,
-              },
+    base: "/",
+    build: {
+        outDir: "dist",
+        assetsDir: "assets",
+        minify: "terser",
+        sourcemap: false,
+        chunkSizeWarningLimit: 1500,
+        terserOptions: {
+            compress: {
+                drop_console: true,
+                drop_debugger: true,
+                pure_funcs: ["console.log"],
             },
-          },
-        ],
-      },
-      png: {
-        quality: 80,
-      },
-      jpeg: {
-        quality: 80,
-      },
-      jpg: {
-        quality: 80,
-      },
-      tiff: {
-        quality: 80,
-      },
-      gif: undefined,
-      webp: {
-        quality: 80,
-      },
-      avif: {
-        quality: 80,
-      },
-    }),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-    },
-  },
-  server: {
-    host: "0.0.0.0", // 监听所有网络接口
-    port: 5173, // 确保端口设置正确
-    allowedHosts: ["w.godserver.cn",'godserver.cn','www.godserver.cn','rbq.college'], // 允许的主机列表
-    proxy: {
-      "/api": {
-        target: "https://mais.godserver.cn/api",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "Mozilla/5.0",
-          "Cache-Control": "no-cache",
-          "Pragma": "no-cache"
-        },
-      },
-      "/sys1": {
-        target: "http://top.godserver.cn:54781",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/sys1/, ''),
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "Mozilla/5.0",
-          "Cache-Control": "no-cache",
-          "Pragma": "no-cache"
-        },
-      },
-      "/sys2": {
-        target: "http://43.153.174.191:54781",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/sys2/, ''),
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "Mozilla/5.0",
-          "Cache-Control": "no-cache",
-          "Pragma": "no-cache"
-        },
-      },
-      "/cen": {
-        target: "http://127.0.0.1:34234/api",//"http://192.168.106.177:34234/api",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/cen/, ''),
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "Mozilla/5.0",
-          "Cache-Control": "no-cache",
-          "Pragma": "no-cache"
-        },
-      },
-      "/cdn": {
-        target: "https://cdn.godserver.cn/",//"http://192.168.106.177:34234/api",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/cdn/, ''),
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "Mozilla/5.0",
-          "Cache-Control": "no-cache",
-          "Pragma": "no-cache"
-        },
-      },
-        "/map": {
-            target: "https://api.map.baidu.com/",//"http://192.168.106.177:34234/api",
-            changeOrigin: true,
-            rewrite: (path) => path.replace(/^\/map/, ''),
-            headers: {
-                Accept: "application/json",
-                "User-Agent": "Mozilla/5.0",
-                "Cache-Control": "no-cache",
-                "Pragma": "no-cache"
+            format: {
+                comments: /@license/i,
             },
         },
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    vendor: ["vue", "vue-router"],
+                },
+                chunkFileNames: "assets/js/[name]-[hash].js",
+                entryFileNames: "assets/js/[name]-[hash].js",
+                assetFileNames: "assets/[ext]/[name]-[hash].[ext]",
+            },
+        },
+        cssCodeSplit: true,
+        cssMinify: true,
     },
-  },
-  define: {
-    __VUE_OPTIONS_API__: true,
-    __VUE_PROD_DEVTOOLS__: false,
-    "process.env.VITE_FONT_URL": JSON.stringify(fontConfig.url),
-    "process.env.VITE_FONT_ENABLED": JSON.stringify(fontConfig.enabled),
-    "process.env.VITE_FONT_PRELOAD": JSON.stringify(fontConfig.preload),
-  },
+    plugins: [
+        cesium(),
+        vue(),
+        viteCompression({
+            verbose: true,
+            disable: false,
+            threshold: 10240,
+            algorithm: "gzip",
+            ext: ".gz",
+        }),
+        ViteImageOptimizer({
+            test: /\.(jpe?g|png|gif|svg)$/i,
+            exclude: undefined,
+            include: undefined,
+            includePublic: true,
+            logStats: true,
+            ansiColors: true,
+            svg: {
+                multipass: true,
+                plugins: [
+                    {
+                        name: "preset-default",
+                        params: {
+                            overrides: {
+                                removeViewBox: false,
+                                removeEmptyAttrs: false,
+                            },
+                        },
+                    },
+                ],
+            },
+            png: {
+                quality: 80,
+            },
+            jpeg: {
+                quality: 80,
+            },
+            jpg: {
+                quality: 80,
+            },
+            tiff: {
+                quality: 80,
+            },
+            gif: undefined,
+            webp: {
+                quality: 80,
+            },
+            avif: {
+                quality: 80,
+            },
+        }),
+    ],
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "src"),
+        },
+    },
+    server: {
+        host: "0.0.0.0", // 监听所有网络接口
+        port: 5173, // 确保端口设置正确
+        allowedHosts: ["w.godserver.cn",'godserver.cn','www.godserver.cn','rbq.college'], // 允许的主机列表
+        proxy: {
+            "/api": {
+                target: "https://mais.godserver.cn/api",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, ''),
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                },
+            },
+            "/sys1": {
+                target: "http://top.godserver.cn:54781",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/sys1/, ''),
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                },
+            },
+            "/sys2": {
+                target: "http://43.153.174.191:54781",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/sys2/, ''),
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                },
+            },
+            "/cen": {
+                target: "http://127.0.0.1:34234/api",//"http://192.168.106.177:34234/api",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/cen/, ''),
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                },
+            },
+            "/cdn": {
+                target: "https://cdn.godserver.cn/",//"http://192.168.106.177:34234/api",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/cdn/, ''),
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                },
+            },
+            "/map": {
+                target: "https://api.map.baidu.com/",//"http://192.168.106.177:34234/api",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/map/, ''),
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                },
+            },
+            "/openskyauth": {
+                target: "https://auth.opensky-network.org/",//"http://192.168.106.177:34234/api",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/openskyauth/, ''),
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                },
+            },
+            "/myopensky": {
+                target: "127.0.0.1:21113/",//"http://192.168.106.177:34234/api",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/myopensky/, ''),
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                },
+            },
+        },
+    },
+    define: {
+        __VUE_OPTIONS_API__: true,
+        __VUE_PROD_DEVTOOLS__: false,
+        "process.env.VITE_FONT_URL": JSON.stringify(fontConfig.url),
+        "process.env.VITE_FONT_ENABLED": JSON.stringify(fontConfig.enabled),
+        "process.env.VITE_FONT_PRELOAD": JSON.stringify(fontConfig.preload),
+    },
 });

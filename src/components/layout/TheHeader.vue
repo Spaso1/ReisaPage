@@ -96,9 +96,10 @@ const navItems = [
   { name: "博客", path: "/blog" },
   { name: "联系", path: "/contact" },
   { name: "服务状态", path: "/maimai" },
-  { name: "舞萌机厅", path: "/mapmaimai" },
-  { name: "Earth", path: "/earth" },
+  { name: "Flight", path: "/flight" },
 
+  { name: "舞萌机厅", path: "/mapmaimai" },
+  { name: "Earth", path: "/earth?lo=116.404&la=39.915" },
 ];
 
 const toggleMenu = () => {

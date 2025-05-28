@@ -84,6 +84,24 @@ const routes: RouteRecordRaw[] = [
       transition: "scale",
     },
   },
+    {
+        path: "/flight",
+        name: "Flight",
+        component: () => import("@/views/flight.vue"),
+        meta: {
+            title: "Flight",
+            transition: "scale",
+        },
+    },
+  {
+    path: "/flight2",
+    name: "Flight",
+    component: () => import("@/views/flight2.vue"),
+    meta: {
+      title: "Flight",
+      transition: "scale",
+    },
+  },
   {
     path: "/mapmaimai",
     name: "舞萌机厅",
@@ -95,10 +113,10 @@ const routes: RouteRecordRaw[] = [
   },
     {
         path: "/earth",
-        name: "舞萌机厅",
+        name: "Earth",
         component: () => import("@/views/Cesium.vue"),
         meta: {
-            title: "舞萌机厅",
+            title: "Earth",
             transition: "scale",
         },
     },
