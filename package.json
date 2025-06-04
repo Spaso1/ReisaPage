@@ -28,6 +28,7 @@
     "pinia": "^2.1.7",
     "qrcode.vue": "^3.6.0",
     "rss-parser": "^3.13.0",
+    "uuid": "^11.1.0",
     "vue": "^3.4.3",
     "vue-router": "^4.2.5",
     "vuetify": "^3.8.0-beta.0"
