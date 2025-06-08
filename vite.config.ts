@@ -188,6 +188,17 @@ export default defineConfig({
                     "Pragma": "no-cache"
                 },
             },
+            "/jm": {
+                target: "http://jm.godserver.cn:35621/",//"http://192.168.106.177:34234/api",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/jm/, ''),
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                },
+            },
         },
     },
     define: {

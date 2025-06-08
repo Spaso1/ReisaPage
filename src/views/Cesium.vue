@@ -1,7 +1,11 @@
 <template>
     <div class="map-container">
         <CustomToast ref="toast" />
-        <div id="cesiumContainer" class="cesium-container"></div>
+      <div id="cesiumContainer" class="cesium-container"></div>
+      <div class="zoom-controls">
+        <button @click="zoomIn">+</button>
+        <button @click="zoomOut">-</button>
+      </div>
         <div v-if="selectedPoint" class="popup">
             <h3>{{ selectedPoint.name }}</h3>
             <p>Province: {{ selectedPoint.province }}</p>
@@ -65,7 +69,20 @@ export default {
                 },
             });
         },
-        // 在mounted中初始化时设置一次全局点击事件
+      zoomIn() {
+        const viewer = this.viewer;
+        if (viewer && viewer.camera) {
+          viewer.camera.zoomIn(); // 放大
+        }
+      },
+      zoomOut() {
+        const viewer = this.viewer;
+        if (viewer && viewer.camera) {
+          viewer.camera.zoomOut(); // 缩小
+        }
+      },
+
+      // 在mounted中初始化时设置一次全局点击事件
         setupClickHandler() {
             const handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
             handler.setInputAction((click) => {
@@ -366,6 +383,31 @@ export default {
 
 .popup button:hover {
     background: #40a9ff;
+}
+.zoom-controls {
+  position: absolute;
+  bottom: 20px;
+  padding-bottom: 64px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.zoom-controls button {
+  margin: 4px 0;
+  padding: 8px 12px;
+  font-size: 16px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.zoom-controls button:hover {
+  background-color: #f0f0f0;
 }
 
 /* 定义弹出动画 */

@@ -70,7 +70,7 @@ const handleClickOutside = (event: MouseEvent) => {
 
 // 在组件挂载时添加事件监听
 onMounted(() => {
-  fetchUserInfo(); // 页面加载时获取用户信息
+  //fetchUserInfo(); // 页面加载时获取用户信息
   window.addEventListener("click", handleClickOutside);
   window.addEventListener("keydown", handleKeydown);
   eventBus.on('refresh-user-info', fetchUserInfo);});
@@ -130,12 +130,13 @@ const toggleMenu = () => {
           >
             {{ item.name }}
           </router-link>
+         <!----
           <div v-if="userInfo">
             <div class="flex items-center space-x-2 cursor-pointer"  @click="$router.push('/user')">
               <img
-                :src="userInfo.avatar"
-                alt="头像"
-                class="w-8 h-8 rounded-full object-cover"
+                  :src="userInfo.avatar"
+                  alt="头像"
+                  class="w-8 h-8 rounded-full object-cover"
               />
               <span class="text-gray-600 dark:text-gray-300">{{ userInfo.name }}</span>
             </div>
@@ -143,37 +144,39 @@ const toggleMenu = () => {
           <div v-else>
             <div class="flex space-x-2">
               <button
-                @click="$router.push('/login')"
-                class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                  @click="$router.push('/login')"
+                  class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
                 登录 / 注册
               </button>
             </div>
           </div>
+
+          ----->
           <ThemeToggle />
         </div>
         <!-- 移动端菜单按钮 -->
         <div class="md:hidden flex items-center space-x-2">
           <ThemeToggle />
           <button
-            class="menu-button p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-            @click.stop="toggleMenu"
-            aria-label="Toggle menu"
+              class="menu-button p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              @click.stop="toggleMenu"
+              aria-label="Toggle menu"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
-                v-if="!isMenuOpen"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
+                  v-if="!isMenuOpen"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
               />
               <path
-                v-else
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
+                  v-else
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
               />
             </svg>
           </button>

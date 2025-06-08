@@ -147,6 +147,15 @@ const routes: RouteRecordRaw[] = [
       title: "排卡",
       transition: "scale",
     },
+  },
+  {
+    path: '/reiader',
+    name: '阅读',
+    component: () => import("@/views/Reiader.vue"),
+    meta: {
+      title: "阅读",
+      transition: "scale",
+    },
   }
 ];
 
